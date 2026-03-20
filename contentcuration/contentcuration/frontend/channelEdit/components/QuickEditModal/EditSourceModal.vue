@@ -363,7 +363,7 @@
         margin-left: 20px;
       }
 
-      /deep/ input {
+      ::v-deep input {
         padding-right: 44px;
       }
     }

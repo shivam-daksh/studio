@@ -266,13 +266,13 @@
 <style lang="scss" scoped>
 
   .with-trailing-input-icon {
-    /deep/ .v-input__append-outer {
+    ::v-deep .v-input__append-outer {
       position: absolute;
       right: 4px;
       margin-top: 8px !important;
     }
 
-    /deep/ .v-input__control > .v-input__slot {
+    ::v-deep .v-input__control > .v-input__slot {
       min-width: 400px;
       background: #f5f5f5 !important;
 
@@ -282,13 +282,13 @@
     }
 
     &.v-input--has-state {
-      /deep/ .v-input__control > .v-input__slot::before {
+      ::v-deep .v-input__control > .v-input__slot::before {
         border-color: currentcolor !important;
       }
     }
 
     &:hover {
-      /deep/ .v-input__control > .v-input__slot::before {
+      ::v-deep .v-input__control > .v-input__slot::before {
         border-color: rgba(0, 0, 0, 0.3) !important;
       }
     }

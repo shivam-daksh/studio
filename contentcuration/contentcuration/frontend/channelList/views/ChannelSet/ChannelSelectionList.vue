@@ -150,7 +150,7 @@
     margin: 0;
   }
 
-  .channel /deep/ .k-checkbox {
+  .channel ::v-deep .k-checkbox {
     vertical-align: middle;
   }
 

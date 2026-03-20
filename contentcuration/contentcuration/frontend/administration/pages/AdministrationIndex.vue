@@ -167,7 +167,7 @@
       background-color: var(--v-greyBackground-lighten1) !important;
     }
 
-    /deep/ .v-table__overflow {
+    & ::v-deep .v-table__overflow {
       max-height: calc(100vh - 332px);
       overflow-y: auto;
     }

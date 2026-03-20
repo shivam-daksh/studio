@@ -324,7 +324,7 @@
 
 <style scoped>
 
-  /deep/ .action-link .v-btn__content {
+  ::v-deep .action-link .v-btn__content {
     justify-content: start;
   }
 

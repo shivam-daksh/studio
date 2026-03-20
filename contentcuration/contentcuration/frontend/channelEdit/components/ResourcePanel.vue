@@ -914,7 +914,7 @@
     color: grey;
   }
 
-  /deep/ .v-list__tile {
+  ::v-deep .v-list__tile {
     padding: 0;
   }
 

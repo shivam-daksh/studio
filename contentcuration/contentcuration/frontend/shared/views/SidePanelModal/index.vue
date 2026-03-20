@@ -230,7 +230,7 @@
   }
 
   /** Need to be sure a KDropdownMenu shows up on the Side Panel */
-  /deep/ .tippy-popper {
+  ::v-deep .tippy-popper {
     z-index: 24;
   }
 
