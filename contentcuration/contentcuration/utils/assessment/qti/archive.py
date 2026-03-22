@@ -49,7 +49,10 @@ choice_interactions = {
     "true_false",
 }
 text_entry_interactions = {exercises.INPUT_QUESTION, exercises.FREE_RESPONSE}
-ordering_interactions = {"ordering"}
+ordering_interactions = {
+    "ordering",
+    getattr(exercises, "ORDERING", "ordering"),
+}
 
 
 def hex_to_qti_id(hex_string):
@@ -234,30 +237,36 @@ class QTIExerciseGenerator(ExerciseArchiveGenerator):
         self, assessment_item, processed_data: Dict[str, Any]
     ) -> tuple[str, bytes]:
         """Create QTI assessment item XML."""
+        item_type = assessment_item.type
+        if isinstance(item_type, str):
+            item_type = item_type.strip()
 
         # Skip Perseus questions as they can't be easily converted
-        if assessment_item.type == exercises.PERSEUS_QUESTION:
+        if item_type == exercises.PERSEUS_QUESTION:
             raise ValueError(
                 f"Perseus questions are not supported in QTI format: {assessment_item.assessment_id}"
             )
 
-        if assessment_item.type in choice_interactions:
+        if item_type in choice_interactions:
             (
                 interaction,
                 response_declaration,
             ) = self._create_choice_interaction_and_response(processed_data)
-        elif assessment_item.type in ordering_interactions:
+        elif item_type in ordering_interactions:
             (
                 interaction,
                 response_declaration,
             ) = self._create_order_interaction_and_response(processed_data)
-        elif assessment_item.type in text_entry_interactions:
+        elif item_type in text_entry_interactions:
             (
                 interaction,
                 response_declaration,
             ) = self._create_text_entry_interaction_and_response(processed_data)
         else:
-            raise ValueError(f"Unsupported question type: {assessment_item.type}")
+            raise ValueError(
+                f"Unsupported question type: {assessment_item.type} "
+                f"(assessment_id={assessment_item.assessment_id})"
+            )
 
         # Create item body with the interaction
         item_body = ItemBody(children=[interaction])
