@@ -61,3 +61,34 @@ class ChoiceInteraction(BlockInteraction):
         if self.max_choices > len(self.answers):
             raise ValueError("`max_choices` cannot exceed number of answers")
         return self
+
+
+class OrderInteraction(BlockInteraction):
+    """For ordering questions where learner response sequence matters."""
+
+    shuffle: Optional[bool] = None
+    max_choices: Optional[NonNegativeInt] = None
+    min_choices: Optional[NonNegativeInt] = 0
+    orientation: Orientation = Orientation.VERTICAL
+    prompt: Optional[Prompt] = None
+    answers: Annotated[List[SimpleChoice], Len(min_length=1)]
+
+    @field_validator("answers")
+    def _unique_answer_identifiers(
+        cls, answers: List[SimpleChoice]
+    ) -> List[SimpleChoice]:
+        identifiers = [choice.identifier for choice in answers]
+        if len(set(identifiers)) != len(identifiers):
+            raise ValueError(
+                "Duplicate identifiers detected in OrderInteraction.answers; "
+                "each SimpleChoice.identifier must be unique."
+            )
+        return answers
+
+    @model_validator(mode="after")
+    def _check_choice_bounds(self):
+        if self.max_choices is not None and self.min_choices > self.max_choices:
+            raise ValueError("`min_choices` cannot exceed `max_choices`")
+        if self.max_choices is not None and self.max_choices > len(self.answers):
+            raise ValueError("`max_choices` cannot exceed number of answers")
+        return self

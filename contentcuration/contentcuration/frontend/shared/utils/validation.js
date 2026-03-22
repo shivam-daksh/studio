@@ -554,6 +554,10 @@ export function getAssessmentItemErrors(assessmentItem, freeResponseInvalid = fa
     assessmentItem.answers.filter(
       answer => answer.answer && String(answer.answer).trim() && answer.correct === true,
     ).length > 0;
+  const hasAtLeastTwoAnswers =
+    assessmentItem.answers &&
+    assessmentItem.answers.filter(
+      answer => answer.answer && String(answer.answer).trim()).length >= 2;
 
   if (!assessmentItem.question || !assessmentItem.question.trim()) {
     errors.push(ValidationErrors.QUESTION_REQUIRED);
@@ -573,6 +577,12 @@ export function getAssessmentItemErrors(assessmentItem, freeResponseInvalid = fa
     case AssessmentItemTypes.TRUE_FALSE:
     case AssessmentItemTypes.SINGLE_SELECTION:
       if (!hasOneCorrectAnswer) {
+        errors.push(ValidationErrors.INVALID_NUMBER_OF_CORRECT_ANSWERS);
+      }
+      break;
+
+    case AssessmentItemTypes.ORDERING:
+      if (!hasAtLeastTwoAnswers) {
         errors.push(ValidationErrors.INVALID_NUMBER_OF_CORRECT_ANSWERS);
       }
       break;

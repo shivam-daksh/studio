@@ -104,6 +104,12 @@ export function updateAnswersToQuestionType(questionType, answers) {
     case AssessmentItemTypes.MULTIPLE_SELECTION:
       return answersCopy;
 
+    case AssessmentItemTypes.ORDERING:
+      return answersCopy.map(answer => {
+        answer.correct = true;
+        return answer;
+      });
+
     case AssessmentItemTypes.INPUT_QUESTION:
       return answersCopy.reduce((obj, answer) => {
         // If there is anything other than a number in the answer

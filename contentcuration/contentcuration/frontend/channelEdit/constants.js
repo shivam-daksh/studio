@@ -44,6 +44,7 @@ export const AssessmentItemToolbarActions = {
 export const AssessmentItemTypeLabels = {
   [AssessmentItemTypes.SINGLE_SELECTION]: 'questionTypeSingleSelection',
   [AssessmentItemTypes.MULTIPLE_SELECTION]: 'questionTypeMultipleSelection',
+  [AssessmentItemTypes.ORDERING]: 'questionTypeOrdering',
   [AssessmentItemTypes.TRUE_FALSE]: 'questionTypeTrueFalse',
   [AssessmentItemTypes.INPUT_QUESTION]: 'questionTypeInput',
   [AssessmentItemTypes.PERSEUS_QUESTION]: 'questionTypePerseus',

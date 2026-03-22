@@ -155,6 +155,7 @@ export const ErrorTypes = Object.freeze({
 export const AssessmentItemTypes = {
   SINGLE_SELECTION: 'single_selection',
   MULTIPLE_SELECTION: 'multiple_selection',
+  ORDERING: 'ordering',
   TRUE_FALSE: 'true_false',
   INPUT_QUESTION: 'input_question',
   PERSEUS_QUESTION: 'perseus_question',

@@ -1978,6 +1978,44 @@ class TestQTIExerciseCreation(StudioTestCase):
 
         self.assertEqual(exercise_file.checksum, "8e488543ef52f0b153553eaf9fb51419")
 
+    def test_ordering_question(self):
+        """Test QTI generation for ordering questions."""
+        assessment_id = "4444444444444444444444444444444d"
+        qti_id = hex_to_qti_id(assessment_id)
+
+        item = self._create_assessment_item(
+            "ordering",
+            "Arrange the planets from nearest to farthest from the Sun.",
+            [
+                {"answer": "Mercury", "correct": True, "order": 1},
+                {"answer": "Venus", "correct": True, "order": 2},
+                {"answer": "Earth", "correct": True, "order": 3},
+            ],
+            assessment_id=assessment_id,
+        )
+
+        exercise_data = {
+            "mastery_model": exercises.M_OF_N,
+            "randomize": True,
+            "n": 1,
+            "m": 1,
+            "all_assessment_items": [item.assessment_id],
+            "assessment_mapping": {item.assessment_id: "ordering"},
+        }
+
+        self._create_qti_zip(exercise_data)
+        exercise_file = self.exercise_node.files.get(preset_id=format_presets.QTI_ZIP)
+        zip_file = self._validate_qti_zip_structure(exercise_file)
+
+        expected_item_file = f"items/{qti_id}.xml"
+        actual_item_xml = zip_file.read(expected_item_file).decode("utf-8")
+
+        self.assertIn('<qti-response-declaration identifier="RESPONSE" cardinality="ordered" base-type="identifier">', actual_item_xml)
+        self.assertIn('<qti-order-interaction response-identifier="RESPONSE" shuffle="true" max-choices="3" min-choices="0" orientation="vertical">', actual_item_xml)
+        self.assertIn("<qti-value>choice_0</qti-value>", actual_item_xml)
+        self.assertIn("<qti-value>choice_1</qti-value>", actual_item_xml)
+        self.assertIn("<qti-value>choice_2</qti-value>", actual_item_xml)
+
     def test_unsupported_question_type(self):
         """Test that unsupported question types raise appropriate errors"""
         assessment_id = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"

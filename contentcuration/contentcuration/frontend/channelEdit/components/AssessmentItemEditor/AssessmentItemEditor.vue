@@ -241,6 +241,10 @@
             text: translator.$tr(AssessmentItemTypeLabels[AssessmentItemTypes.MULTIPLE_SELECTION]),
           },
           {
+            value: AssessmentItemTypes.ORDERING,
+            text: translator.$tr(AssessmentItemTypeLabels[AssessmentItemTypes.ORDERING]),
+          },
+          {
             value: AssessmentItemTypes.INPUT_QUESTION,
             text: translator.$tr(AssessmentItemTypeLabels[AssessmentItemTypes.INPUT_QUESTION]),
           },
@@ -311,6 +315,10 @@
 
           case AssessmentItemTypes.INPUT_QUESTION:
             errorMessages.push(translator.$tr(`errorProvideAtLeastOneCorrectAnswer`));
+            break;
+
+          case AssessmentItemTypes.ORDERING:
+            errorMessages.push(translator.$tr(`errorProvideAtLeastTwoAnswers`));
             break;
         }
 
@@ -405,6 +413,21 @@
 
             break;
 
+          case AssessmentItemTypes.ORDERING:
+            if (typeof this.openDialog === 'function' && this.answers.length > 0) {
+              this.openDialog({
+                title: this.$tr('dialogTitle'),
+                message: this.$tr('dialogMessageChangeToOrdering'),
+                submitLabel: this.$tr('dialogSubmitBtnLabel'),
+                onSubmit: () => this.changeKind(newKind),
+                onCancel: this.rerenderKindSelect,
+              });
+            } else {
+              this.changeKind(newKind);
+            }
+
+            break;
+
           case AssessmentItemTypes.FREE_RESPONSE:
             if (typeof this.openDialog === 'function' && this.answers.length > 0) {
               this.openDialog({
@@ -470,6 +493,8 @@
         "Switching to 'true or false' will remove all current answers. Continue?",
       dialogMessageChangeToInput:
         "Switching to 'numeric input' will set all answers as correct and remove all non-numeric answers. Continue?",
+      dialogMessageChangeToOrdering:
+        "Switching to 'ordering' will preserve answers and mark them all as correct. Continue?",
       dialogMessageChangeToFreeResponse:
         "Switching to 'free response' will remove all current answers. Continue?",
     },

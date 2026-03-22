@@ -270,6 +270,9 @@
       isMultipleSelection() {
         return this.questionKind === AssessmentItemTypes.MULTIPLE_SELECTION;
       },
+      isOrdering() {
+        return this.questionKind === AssessmentItemTypes.ORDERING;
+      },
       isTrueFalse() {
         return this.questionKind === AssessmentItemTypes.TRUE_FALSE;
       },
@@ -283,7 +286,7 @@
         return !this.isTrueFalse;
       },
       toolbarIconActions() {
-        if (this.isSingleSelection || this.isMultipleSelection) {
+        if (this.isSingleSelection || this.isMultipleSelection || this.isOrdering) {
           return [
             AssessmentItemToolbarActions.MOVE_ITEM_UP,
             AssessmentItemToolbarActions.MOVE_ITEM_DOWN,
@@ -475,7 +478,7 @@
         let updatedAnswers = this.answers || [];
         updatedAnswers = updateAnswersOrder(updatedAnswers);
 
-        const defaultCorrectState = this.isInputQuestion ? true : false;
+        const defaultCorrectState = this.isInputQuestion || this.isOrdering;
         updatedAnswers.push({
           answer: '',
           correct: defaultCorrectState,

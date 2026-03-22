@@ -33,6 +33,9 @@ from contentcuration.utils.assessment.qti.imsmanifest import Resources
 from contentcuration.utils.assessment.qti.interaction_types.simple import (
     ChoiceInteraction,
 )
+from contentcuration.utils.assessment.qti.interaction_types.simple import (
+    OrderInteraction,
+)
 from contentcuration.utils.assessment.qti.interaction_types.simple import SimpleChoice
 from contentcuration.utils.assessment.qti.interaction_types.text_based import (
     TextEntryInteraction,
@@ -46,6 +49,7 @@ choice_interactions = {
     "true_false",
 }
 text_entry_interactions = {exercises.INPUT_QUESTION, exercises.FREE_RESPONSE}
+ordering_interactions = {"ordering"}
 
 
 def hex_to_qti_id(hex_string):
@@ -176,6 +180,53 @@ class QTIExerciseGenerator(ExerciseArchiveGenerator):
         )
         return interaction, response_declaration
 
+    def _create_order_interaction_and_response(
+        self, processed_data: Dict[str, Any]
+    ) -> Tuple[OrderInteraction, ResponseDeclaration]:
+        """Create a QTI order interaction where answer sequence is the correct response."""
+
+        prompt = Prompt(
+            children=self._create_html_content_from_text(processed_data["question"])
+        )
+
+        choices = []
+        correct_values = []
+        for i, answer in enumerate(processed_data.get("answers", [])):
+            choice_id = f"choice_{i}"
+            choice_content = self._create_html_content_from_text(
+                answer.get("answer", "")
+            )
+
+            choice = SimpleChoice(
+                identifier=choice_id,
+                children=choice_content,
+                show_hide=ShowHide.SHOW,
+                fixed=False,
+            )
+            choices.append(choice)
+            correct_values.append(Value(value=choice_id))
+
+        response_declaration = ResponseDeclaration(
+            identifier="RESPONSE",
+            cardinality=Cardinality.ORDERED,
+            base_type=BaseType.IDENTIFIER,
+            correct_response=CorrectResponse(value=correct_values)
+            if correct_values
+            else None,
+        )
+
+        interaction = OrderInteraction(
+            response_identifier="RESPONSE",
+            prompt=prompt,
+            answers=choices,
+            shuffle=processed_data.get("randomize", False),
+            max_choices=len(choices),
+            min_choices=0,
+            orientation=Orientation.VERTICAL,
+        )
+
+        return interaction, response_declaration
+
     def _qti_item_filepath(self, assessment_id):
         return f"items/{assessment_id}.xml"
 
@@ -195,6 +246,11 @@ class QTIExerciseGenerator(ExerciseArchiveGenerator):
                 interaction,
                 response_declaration,
             ) = self._create_choice_interaction_and_response(processed_data)
+        elif assessment_item.type in ordering_interactions:
+            (
+                interaction,
+                response_declaration,
+            ) = self._create_order_interaction_and_response(processed_data)
         elif assessment_item.type in text_entry_interactions:
             (
                 interaction,
