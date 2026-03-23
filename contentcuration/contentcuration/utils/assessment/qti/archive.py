@@ -239,7 +239,9 @@ class QTIExerciseGenerator(ExerciseArchiveGenerator):
         """Create QTI assessment item XML."""
         item_type = assessment_item.type
         if isinstance(item_type, str):
-            item_type = item_type.strip()
+            item_type = item_type.strip().lower().replace("-", "_")
+        elif item_type is not None:
+            item_type = str(item_type).strip().lower().replace("-", "_")
 
         # Skip Perseus questions as they can't be easily converted
         if item_type == exercises.PERSEUS_QUESTION:
